@@ -1,9 +1,11 @@
 (ns pdf-layout.core
-  (:import [com.planbase.pdf.layoutmanager BorderStyle Cell CellStyle LineStyle LogicalPage Padding PdfLayoutMgr ScaledJpeg TextStyle XyOffset]
+  (:import [com.planbase.pdf.layoutmanager BorderStyle Cell CellStyle
+            LineStyle LogicalPage
+            LogicalPage$Orientation Padding
+            PdfLayoutMgr ScaledJpeg
+            TextStyle XyOffset]
            [org.apache.pdfbox.exceptions COSVisitorException]
            [org.apache.pdfbox.pdmodel.font PDType1Font]
-                                        ;[org.junit Test]
-           
            [javax.imageio ImageIO]		
            [java.awt.image BufferedImage]		
            [java.io File]		     
@@ -19,7 +21,7 @@
       tl CellStyle$Align/TOP_LEFT
       pMargin (float 40.0)
       page-mgr (. PdfLayoutMgr newRgbPageMgr)
-      logical-page (.logicalPageStart page-mgr)
+      logical-page (. page-mgr (logicalPageStart LogicalPage$Orientation/PORTRAIT))
       tableWidth (- (.pageWidth logical-page) (* (float 2.0) pMargin)) 
       pageRMargin (+ pMargin tableWidth)           
       colWidth (/ tableWidth (float 4.0))                    
@@ -53,9 +55,12 @@
                                           (. Color BLACK))))
               (rowBuilder)
               ;; these are erroring out both the align call and the add
-              ;; (cellBuilder) (align CellStyle$Align/TOP_LEFT) (add "line 1" "line two" "line three") (buildCell)
-              ;; (cellBuilder) (align CellStyle$Align/TOP_CENTER) (add ["line 1" "line two" "line three"]) (buildCell)
-              ;; (cellBuilder) (align CellStyle$Align/TOP_RIGHT) (add ["line 1" "line two" "line three"]) (buildCell)
+              (cellBuilder) (align CellStyle$Align/TOP_LEFT)
+              (add (into-array ["line 1" "line two" "line three"])) (buildCell)
+              (cellBuilder) (align CellStyle$Align/TOP_CENTER)
+              (add (into-array ["line 1" "line two" "line three"])) (buildCell)
+              (cellBuilder) (align CellStyle$Align/TOP_RIGHT)
+              (add (into-array ["line 1" "line two" "line three"])) (buildCell)
               (buildRow)
               (buildPart)
 
